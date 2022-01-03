@@ -45,7 +45,7 @@ if __name__ == '__main__':
     data['clean'] = data.text.apply(lambda t: normalizer.normalize(t))
 
     print('Calculating English probability')
-    data['en_prob'] = data.clean.apply(lambda t: len(re.findall('[A-Za-z\s]', t)) / len(t))
+    data['en_prob'] = data.clean.apply(lambda t: len(re.findall('[A-Za-z\s]', t)) / (len(t) + 1))
 
     data.drop(columns=['text', 'url', 'website', 'linkedin'], inplace=True)
 
