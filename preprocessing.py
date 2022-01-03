@@ -34,9 +34,18 @@ class TextNormalizer:
 if __name__ == '__main__':
     data_path = sys.argv[1]
     output_path = sys.argv[2]
+
+    print('Reading data from', data_path)
     data = pd.read_csv(data_path, index_col='id')
     normalizer = TextNormalizer()
+
+    print('Cleaning text')
     data['clean'] = data.text.apply(lambda t: normalizer.normalize(t))
+
+    print('Calculating English probability')
     data['en_prob'] = data.clean.apply(lambda t: len(re.findall('[A-Za-z\s]', t)) / len(t))
+
     data.drop(columns=['text', 'url', 'website', 'linkedin'], inplace=True)
+
+    print('Saving to', output_path)
     data.to_csv(output_path)
