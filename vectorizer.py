@@ -1,9 +1,8 @@
-class Vectorizer:
-    def __init__(self, corpus:list[str]):
-        self.corpus = corpus
+from typing import Iterable
 
-    def fit(self, corpus):
+class Vectorizer:
+    def fit(self, corpus: Iterable[str]):
         pass
 
-    def transform(self, corpus):
+    def transform(self, corpus: Iterable[str]):
         pass
