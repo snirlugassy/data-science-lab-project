@@ -23,13 +23,15 @@ class TextNormalizer:
         return self.__stemmer.stem(t)
 
     def normalize(self, text):
-        text = re.sub(HTML_TAG, ' ', text)
-        text = re.sub('\W', ' ', text)
-        text = re.sub('\d+', ' ', text)
-        text = re.sub('\s+', ' ', text)
-        text = text.lower().strip()
-        text = str.join(' ', [self._stem(x) for x in text.split(' ') if len(x) > 1 and x not in STOPWORDS])   
-        return text
+        if isinstance(text, str):
+            text = re.sub(HTML_TAG, ' ', text)
+            text = re.sub('\W', ' ', text)
+            text = re.sub('\d+', ' ', text)
+            text = re.sub('\s+', ' ', text)
+            text = text.lower().strip()
+            text = str.join(' ', [self._stem(x) for x in text.split(' ') if len(x) > 1 and x not in STOPWORDS])   
+            return text
+        return None
 
 if __name__ == '__main__':
     data_path = sys.argv[1]
