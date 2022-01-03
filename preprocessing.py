@@ -31,7 +31,7 @@ class TextNormalizer:
             text = text.lower().strip()
             text = str.join(' ', [self._stem(x) for x in text.split(' ') if len(x) > 1 and x not in STOPWORDS])   
             return text
-        return None
+        return ''
 
 if __name__ == '__main__':
     data_path = sys.argv[1]
