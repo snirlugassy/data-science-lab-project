@@ -4,7 +4,7 @@ import pandas as pd
 from nltk.stem.snowball import SnowballStemmer
 from nltk.corpus import stopwords
 
-STOPWORDS = stopwords.words('english')
+STOPWORDS = {x:1 for x in stopwords.words('english')}
 HTML_TAG = re.compile('<.*?>')
 
 class DataProcessing:
@@ -29,7 +29,7 @@ class TextNormalizer:
             text = re.sub('\d+', ' ', text)
             text = re.sub('\s+', ' ', text)
             text = text.lower().strip()
-            text = str.join(' ', [self._stem(x) for x in text.split(' ') if len(x) > 1 and x not in STOPWORDS])   
+            text = str.join(' ', [x for x in text.split(' ') if len(x) > 1 and not STOPWORDS.get(x)])   
             return text
         return ''
 
