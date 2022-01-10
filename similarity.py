@@ -3,9 +3,6 @@ from sklearn.cluster import KMeans, MiniBatchKMeans
 
 
 def kmeans_clustering(vectors):
-    with open('vectorizer.pkl', 'rb') as f:
-        X = pickle.load(f)
-
     kmeans = KMeans(n_clusters=10, random_state=0, max_iter=10, verbose=True)
     labels = kmeans.fit_predict(vectors)
 
