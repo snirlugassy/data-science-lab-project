@@ -5,7 +5,7 @@ seed = 42
 
 def kmeans_clustering(K, vectors):
     print('Initializing KMeans')
-    kmeans = KMeans(n_clusters=K, random_state=seed, verbose=True)
+    kmeans = KMeans(n_clusters=K, n_init=2, random_state=seed, verbose=True)
     
     print('Fitting vectors')
     kmeans.fit(vectors)
