@@ -29,7 +29,7 @@ class TextNormalizer:
             text = re.sub('\d+', ' ', text)
             text = re.sub('\s+', ' ', text)
             text = text.lower().strip()
-            text = str.join(' ', [x for x in text.split(' ') if len(x) > 1 and not STOPWORDS.get(x)])   
+            text = str.join(' ', [x for x in text.split(' ') if len(x) > 2 and len(x) < 20 and not STOPWORDS.get(x)])   
             return text
         return ''
 
