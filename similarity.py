@@ -1,10 +1,13 @@
 import pickle
-from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.cluster import KMeans
 
 
 def kmeans_clustering(vectors):
-    kmeans = KMeans(n_clusters=10, random_state=0, max_iter=10, verbose=True)
+    print('1')
+    kmeans = KMeans(n_clusters=6, random_state=0, max_iter=10, verbose=True)
+    print('2')
     labels = kmeans.fit_predict(vectors)
+    print('3')
 
     with open('kmeans_model.pkl', 'wb') as f:
         pickle.dump(kmeans, f)
