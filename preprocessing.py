@@ -7,13 +7,6 @@ from nltk.corpus import stopwords
 STOPWORDS = {x:1 for x in stopwords.words('english')}
 HTML_TAG = re.compile('<.*?>')
 
-class DataProcessing:
-    def __init__(self, input_files: list, output_file: str, nrows=20000):
-        self.files = input_files
-    
-    def run(self):
-        pass
-
 
 class TextNormalizer:
     def __init__(self):
@@ -29,7 +22,7 @@ class TextNormalizer:
             text = re.sub('\d+', ' ', text)
             text = re.sub('\s+', ' ', text)
             text = text.lower().strip()
-            text = str.join(' ', [x for x in text.split(' ') if len(x) > 2 and len(x) < 20 and not STOPWORDS.get(x)])   
+            text = str.join(' ', [x for x in text.split(' ') if len(x) > 2 and len(x) < 15 and not STOPWORDS.get(x)])   
             return text
         return ''
 

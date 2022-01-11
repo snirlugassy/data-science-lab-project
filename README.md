@@ -7,7 +7,7 @@ Preprocess the company text, using the following transformations:
 - Remove any number
 - Convert to lower case
 - Remove stopwords
-- Stemming using [SnowballStemmer](https://snowballstem.org/)
+- ??? Stemming using [SnowballStemmer](https://snowballstem.org/)
 
 The transformed text is added to a new column called `clean`.
 
