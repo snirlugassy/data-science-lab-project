@@ -5,19 +5,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-data = pd.read_csv('normalized.csv', index_col='id', usecols=['id','industry','clean','en_prob'])
+if __name__ == '__main__':
+    input_file = sys.argv[1]
+    output_file = sys.argv[2]
 
-plt.hist(data['en_prob'],bins=50)
-plt.ylim([0,1000])
-plt.xlabel('English Probability')
-plt.savefig('en_prob_hist.png')
+    print('Reading data')
+    data = pd.read_csv(input_file, usecols=['text','industry','en_prob'])
 
-data = data[data.en_prob > 0.75]
-data.reset_index(inplace=True, drop=True)
-data.rename({'clean': 'text'}, inplace=True)
+    print('Plotting histogram')
+    plt.hist(data['en_prob'],bins=50)
+    plt.ylim([0,1000])
+    plt.xlabel('English Probability')
+    plt.savefig('en_prob_hist.png')
 
-industry2row = {}
-for industry, group in data.groupby('industry'):
-    industry2row[industry] = group.index.to_list()
-
-data.to_csv('filtered.csv', columns=['clean', 'industry'], index=False)
+    print('Filtering data')
+    data = data[data.en_prob > 0.75]
+    data.reset_index(inplace=True, drop=True)
+    data.to_csv(output_file, columns=['text', 'industry'], index=False)

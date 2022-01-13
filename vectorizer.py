@@ -3,8 +3,8 @@ import sys
 import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-input_file = sys.argv[1]
-TEXT_COLUMN = 'clean'
+
+TEXT_COLUMN = 'text'
 
 def read_corpus(file_path):
     with open(file_path, 'r') as data_file:
@@ -14,16 +14,32 @@ def read_corpus(file_path):
         for row in reader:
             yield row[text_index]
 
-vectorizer = TfidfVectorizer(max_df=0.8)
-print('Fitting vectorizer')
+# if __name__ == '__main__':
+#     csv.field_size_limit(sys.maxsize)
+#     input_file = sys.argv[1]
+#     vectorizer = TfidfVectorizer(max_df=0.7)
+    
+#     print('Fitting vectorizer')
+#     X = vectorizer.fit_transform(read_corpus(input_file))
+#     print("tf-idf matrix shape=", X.shape)
 
-X = vectorizer.fit_transform(read_corpus())
-print("tf-idf matrix shape=", X.shape)
+#     print('Saving tf-idf vectorizer to tfidf.sklearn.pkl')
+#     with open('tfidf.sklearn.pkl', "wb") as f:
+#         pickle.dump(vectorizer, f)
 
-print('Saving tf-idf vectorizer to tfidf.sklearn.pkl')
-with open('tfidf.sklearn.pkl', "wb") as f:
-    pickle.dump(vectorizer, f)
+#     print('Saving tf-idf matrix to vectors.pkl')
+#     with open('vectors.pkl', "wb") as f:
+#         pickle.dump(X, f)
 
-print('Saving tf-idf matrix to vectors.pkl')
-with open('vectors.pkl', "wb") as f:
-    pickle.dump(X, f)
+if __name__ == '__main__':
+    csv.field_size_limit(sys.maxsize)
+    input_file = sys.argv[1]
+    print('loading vectorizer')
+    vectorizer = pickle.load(open('tfidf.sklearn.pkl','rb'))
+
+    print('transforming text')
+    X = vectorizer.transform(read_corpus(input_file))
+
+    print('Saving tf-idf matrix to vectors.pkl')
+    with open('vectors.pkl', "wb") as f:
+        pickle.dump(X, f)
