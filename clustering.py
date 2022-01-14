@@ -46,12 +46,12 @@ if __name__ == '__main__':
         data_file_path = input('Please enter the text csv file path:')
     
     print('Loading text dataframe')
-    data = pd.read_csv('data_filtered.csv')
+    data = pd.read_csv(data_file_path)
 
     print('Assignin cluster to documents')
     data['cluster'] = labels
 
     print('Saving')
-    data.to_csv(data_file_path)
+    data.to_csv(data_file_path, index=False)
 
     print('Done')

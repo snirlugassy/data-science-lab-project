@@ -1,46 +1,50 @@
-import re
 import sys
-import pandas as pd
-from nltk.stem.snowball import SnowballStemmer
+import csv
+import re
+
 from nltk.corpus import stopwords
-
 STOPWORDS = {x:1 for x in stopwords.words('english')}
+
 HTML_TAG = re.compile('<.*?>')
+TEXT = 'text'
+INDUSTRY = 'industry'
+COUNTRY = 'country'
+LATIN = 'latin'
+USA = 'united states'
+LATIN_THRESHOLD = 0.9
 
+def normalize_text(text):
+    if isinstance(text, str):
+        text = re.sub(HTML_TAG, ' ', text)
+        text = re.sub('\W', ' ', text)
+        text = re.sub('\d+', ' ', text)
+        text = re.sub('\s+', ' ', text)
+        text = text.lower().strip()
+        text = str.join(' ', [x for x in text.split(' ') if len(x) > 2 and len(x) < 15 and not STOPWORDS.get(x)])   
+        return text
+    return ''
 
-class TextNormalizer:
-    def __init__(self):
-        self.__stemmer = SnowballStemmer('english', ignore_stopwords=False)
-
-    def _stem(self, t):
-        return self.__stemmer.stem(t)
-
-    def normalize(self, text):
-        if isinstance(text, str):
-            text = re.sub(HTML_TAG, ' ', text)
-            text = re.sub('\W', ' ', text)
-            text = re.sub('\d+', ' ', text)
-            text = re.sub('\s+', ' ', text)
-            text = text.lower().strip()
-            text = str.join(' ', [x for x in text.split(' ') if len(x) > 2 and len(x) < 15 and not STOPWORDS.get(x)])   
-            return text
-        return ''
 
 if __name__ == '__main__':
+    csv.field_size_limit(sys.maxsize)
+
     data_path = sys.argv[1]
     output_path = sys.argv[2]
 
     print('Reading data from', data_path)
-    data = pd.read_csv(data_path, index_col='id')
-    normalizer = TextNormalizer()
-
-    print('Cleaning text')
-    data['clean'] = data.text.apply(lambda t: normalizer.normalize(t))
-
-    print('Calculating English probability')
-    data['en_prob'] = data.clean.apply(lambda t: len(re.findall('[A-Za-z\s]', t)) / (len(t) + 1))
-
-    data.drop(columns=['text', 'url', 'website', 'linkedin'], inplace=True)
-
-    print('Saving to', output_path)
-    data.to_csv(output_path)
+    reader = csv.DictReader(open(data_path, 'r'))
+    writer = csv.DictWriter(open(output_path, 'w'), fieldnames=[TEXT, INDUSTRY])
+    writer.writeheader()
+    
+    line_count = 0
+    for line in reader:
+        line_count += 1
+        print(f'Line {line_count}', end='\r')
+        if line[COUNTRY] == USA:
+            _text = normalize_text(line[TEXT])
+            _latin = len(re.findall('[A-Za-z\s]', _text)) / (len(_text) + 1)
+            if _latin > LATIN_THRESHOLD:
+                writer.writerow({
+                    TEXT: _text,
+                    INDUSTRY: line[INDUSTRY]
+                })
