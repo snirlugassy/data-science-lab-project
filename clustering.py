@@ -3,8 +3,10 @@ import sys
 import gc
 import pandas as pd
 from sklearn.cluster import KMeans
+from vectorizer import VECTORS_FILE
 
 seed = 42
+MODEL_FILE = 'kmeans_model.pkl'
 
 def kmeans_clustering(K, vectors):
     print('Initializing KMeans')
@@ -16,15 +18,17 @@ def kmeans_clustering(K, vectors):
     print('Predicting clusters')
     labels = kmeans.predict(vectors)
 
-    print('Saving KMeans fitted model to kmeans_model.pkl')
-    with open('kmeans_model.pkl', 'wb') as f:
+    print(f'Saving KMeans fitted model to {MODEL_FILE}')
+    with open(MODEL_FILE, 'wb') as f:
         pickle.dump(kmeans, f)
     
     return kmeans, labels
 
 if __name__ == '__main__':
-    print('Loading vectors from vectors.pkl')
-    with open('vectors.pkl', 'rb') as f:
+    data_file_path = sys.argv[1]
+
+    print(f'Loading vectors from {VECTORS_FILE}')
+    with open(VECTORS_FILE, 'rb') as f:
         vectors = pickle.load(f)
         print('Loaded vectors with shape', vectors.shape)
     
@@ -40,11 +44,6 @@ if __name__ == '__main__':
     # Garbage collection
     gc.collect()
 
-    if len(sys.argv) > 1:
-        data_file_path = sys.argv[1]
-    else:
-        data_file_path = input('Please enter the text csv file path:')
-    
     print('Loading text dataframe')
     data = pd.read_csv(data_file_path)
 

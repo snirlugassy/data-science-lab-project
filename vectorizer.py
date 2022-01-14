@@ -4,6 +4,9 @@ import pickle
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 TEXT_COLUMN = 'text'
+MODEL_FILE = 'tfidf.sklearn.pkl'
+VECTORS_FILE = 'vectors.pkl'
+
 
 def read_corpus(file_path):
     with open(file_path, 'r') as data_file:
@@ -23,11 +26,11 @@ if __name__ == '__main__':
     print("tf-idf matrix shape=", X.shape)
 
     print('Saving tf-idf vectorizer to tfidf.sklearn.pkl')
-    with open('tfidf.sklearn.pkl', "wb") as f:
+    with open(MODEL_FILE, "wb") as f:
         pickle.dump(vectorizer, f)
 
     print('Saving tf-idf matrix to vectors.pkl')
-    with open('vectors.pkl', "wb") as f:
+    with open(VECTORS_FILE, "wb") as f:
         pickle.dump(X, f)
 
 # if __name__ == '__main__':

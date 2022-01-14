@@ -6,7 +6,7 @@ from scipy import sparse
 
 
 def cosine(x:sparse.spmatrix,y: sparse.spmatrix):
-    return x.multiply(y).sum() / (x.dot(x.T).sqrt().sum() * y.dot(y.T).sqrt().sum())
+    return (x * y.T).sum() / ((x * x.T) * (y * y.T)).sqrt().sum()
 
 
 class ClusterPairwiseSimilarityThread(threading.Thread):
