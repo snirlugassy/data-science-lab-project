@@ -49,4 +49,7 @@ def run_map_reduce(input_file:str):
     pass
 
 if __name__ == '__main__':
-    samples = sample_data(100000)
+    # samples = sample_data(100000)
+    # merge_data_chunks(DATA_CHUNKS, '_data.csv')
+    run_text_processing('_data.csv', 'data.csv')
+    run_vectorizer('data.csv')

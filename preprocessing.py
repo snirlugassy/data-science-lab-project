@@ -33,18 +33,23 @@ if __name__ == '__main__':
 
     print('Reading data from', data_path)
     reader = csv.DictReader(open(data_path, 'r'))
-    writer = csv.DictWriter(open(output_path, 'w'), fieldnames=[TEXT, INDUSTRY])
-    writer.writeheader()
     
     line_count = 0
+    output = []
     for line in reader:
         line_count += 1
-        print(f'Line {line_count}', end='\r')
+        print(f'Processing line {line_count}', end='\r')
         if line[COUNTRY] == USA:
             _text = normalize_text(line[TEXT])
             _latin = len(re.findall('[A-Za-z\s]', _text)) / (len(_text) + 1)
             if _latin > LATIN_THRESHOLD:
-                writer.writerow({
+                output.append({
                     TEXT: _text,
                     INDUSTRY: line[INDUSTRY]
                 })
+    
+    print('Saving to file')
+    writer = csv.DictWriter(open(output_path, 'w'), fieldnames=[TEXT, INDUSTRY])
+    writer.writeheader()
+    writer.writerows(output)
+    print('Done')
