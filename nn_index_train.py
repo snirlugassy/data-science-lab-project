@@ -1,11 +1,10 @@
 import pickle
 import pandas as pd
-from pysparnn.cluster_index import MultiClusterIndex
+from pysparnn.cluster_index import MultiClusterIndex, ClusterIndex
 
 vectors = pickle.load(open('vectors.pkl','rb'))
-data = pd.read_csv('data.csv')
 
-index = MultiClusterIndex(vectors, data)
+index = ClusterIndex(vectors, list(range(vectors.shape[0])))
 
 with open('nn_index.pkl', 'wb') as f:
     pickle.dump(index, f)

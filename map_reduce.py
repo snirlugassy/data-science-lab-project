@@ -1,9 +1,21 @@
-class MapReduce:
-    def __init__(self, input_file: str) -> None:
-        pass
+from mrjob.job import MRJob
 
-    def map(self):
-        pass
+HEADER = 'text,industry,related_to,related_industry'
+TEXT = 0
+INDUSTRY = 1
+RELATED_TO = 2
+RELATED_INDUSTRY = 3
 
-    def reduce(self):
-        pass
+class IndustryMapReduce(MRJob):
+    def mapper(self, _, row):
+        if not row.startswith(HEADER):
+            company = row.split(',')
+            # skip invalid line seperation
+            if not (company[INDUSTRY].isalnum() or company[RELATED_INDUSTRY].isalnum()):
+                yield ((company[INDUSTRY], company[RELATED_INDUSTRY]), 1)
+
+    def reducer(self, key, values):
+        yield key, sum(values)
+
+if __name__ == '__main__':
+    IndustryMapReduce.run()
