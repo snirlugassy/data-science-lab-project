@@ -1,3 +1,4 @@
+backup/*
 *.csv
 *.pkl
 cluster*.txt
