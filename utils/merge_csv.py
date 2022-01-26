@@ -1,9 +1,7 @@
 import sys
 
-if __name__ == '__main__':
+def merge(input_files: list, output_file: str):
     print('Merging CSV files')
-    input_files = sys.argv[1:-1]
-    output_file = sys.argv[-1]
 
     with open(input_files[0], 'r') as f:
         headers = f.readline()
@@ -17,3 +15,6 @@ if __name__ == '__main__':
                 infile.readline()
                 output.writelines(infile.readlines())
             print(f'Finished appending {file}')
+
+if __name__ == '__main__':
+    merge(sys.argv[1:-1], sys.argv[-1])
