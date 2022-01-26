@@ -11,7 +11,7 @@ INDUSTRY = 'industry'
 COUNTRY = 'country'
 LATIN = 'latin'
 USA = 'united states'
-LATIN_THRESHOLD = 0.9
+DEFAULT_LATIN_THRESHOLD = 0.9
 
 def normalize_text(text):
     if isinstance(text, str):
@@ -24,12 +24,8 @@ def normalize_text(text):
         return text
     return ''
 
-
-if __name__ == '__main__':
+def preprocessing(data_path, output_path, latin_threshold=DEFAULT_LATIN_THRESHOLD, country=USA):
     csv.field_size_limit(sys.maxsize)
-
-    data_path = sys.argv[1]
-    output_path = sys.argv[2]
 
     print('Reading data from', data_path)
     reader = csv.DictReader(open(data_path, 'r'))
@@ -39,10 +35,10 @@ if __name__ == '__main__':
     for line in reader:
         line_count += 1
         print(f'Processing line {line_count}', end='\r')
-        if line[COUNTRY] == USA:
+        if line[COUNTRY] == country:
             _text = normalize_text(line[TEXT])
             _latin = len(re.findall('[A-Za-z\s]', _text)) / (len(_text) + 1)
-            if _latin > LATIN_THRESHOLD:
+            if _latin > latin_threshold:
                 output.append({
                     TEXT: _text,
                     INDUSTRY: line[INDUSTRY]
@@ -53,3 +49,6 @@ if __name__ == '__main__':
     writer.writeheader()
     writer.writerows(output)
     print('Done')
+
+if __name__ == '__main__':
+    preprocessing(sys.argv[1], sys.argv[2])
