@@ -1,45 +1,50 @@
 # Data science lab project
 
-1. preprocessing.py
-Preprocess the company text, using the following transformations:
-- Remove HTML tags
-- Remove any special symbols (non characters or non digits)
-- Remove any number
-- Convert to lower case
-- Remove stopwords
-- ??? Stemming using [SnowballStemmer](https://snowballstem.org/)
+Our goal is to process a large corpus scraped from websites of companies and to construct a weighted directed graph that represents the relations between different industries, we will refer to this graph as Industry Network.
 
-The transformed text is added to a new column called `clean`.
+The Industry network brings insights about the corpus and underlying semantic relations between industries, moreover, it can be later used in other tasks such as clustering or recommendation systems.
 
-Afterwards, The column `en_prob` is added, definition:
-$$ P(text \in English) \approx en\_prob :=  {{|\{c \in [a,z]\cup[A,Z] : c \in text \}|} \over {|text|+1}}$$
+Our pipeline can be easily transferred to other domains such as products, twits, or academic papers, to map the categories of the domain.
 
-Expected columns in input CSV:
-- id
-- text
-- industry
+### Setup
 
-Usage template:
+Creating a virtual environment:
 ```
-python3 preprocessing.py /path/to/input.csv /path/to/output.csv
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-
-2. vectorizer.py
-Expected columns in input CSV:
-- id
-- clean (should be renamed to text or tokens)
-- industry
-
+Installing pysparnn:
 ```
-python3 preprocessing.py /path/to/preprocessed.csv /path/to/output.???
+git clone https://github.com/facebookresearch/pysparnn.git
+cd pysparnn 
+pip install -r requirements.txt 
+python setup.py install
+cd ..
 ```
 
-
-3. similarity.py
+Installing requirements:
 ```
-python3 preprocessing.py /path/to/vectors /path/to/output
+pip install -r requirements.txt
 ```
 
-4. map_reduce.py
-5. statistics.py
+### Using the pipeline
+
+We created `pipeline.py` to automated the whole pipeline process instead of manually running different scripts.
+Modify the path for the data chunks under `pipeline.py`, the current paths are:
+```
+DATA_CHUNKS = [
+    '/datashare/2021/data_chunk_0.csv',
+    '/datashare/2021/data_chunk_1.csv',
+    '/datashare/2021/data_chunk_2.csv',
+]
+```
+
+Run:
+```
+python pipeline.py
+```
+
+### Network analysis
+The network analysis is under `industry_graph.ipynb`, assuming you have `data.csv` populated with 'related_to' and 'related_industry' columns.
+Open the notebook and run all cells.

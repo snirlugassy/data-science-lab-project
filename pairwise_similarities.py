@@ -1,49 +1,29 @@
-import sys
-import threading
 import pickle
+import numpy as np
 import pandas as pd
+from pysparnn.cluster_index import ClusterIndex
 from scipy import sparse
 
 
-def cosine(x:sparse.spmatrix,y: sparse.spmatrix):
-    return (x * y.T).sum() / ((x * x.T) * (y * y.T)).sqrt().sum()
+def append_related_to(nn_index_path, vectors_path, data_path, output_path):
+    with open(nn_index_path, 'rb') as f:
+        index = pickle.load(f)
+    type(index)
 
+    vectors = pickle.load(open(vectors_path,'rb'))
+    data = pd.read_csv(data_path)
 
-class ClusterPairwiseSimilarityThread(threading.Thread):
-    def __init__(self, df, cluster_id, vectors, output_file) -> None:
-        threading.Thread.__init__(self)
-        assert 'cluster' in df.columns
-        assert 'industry' in df.columns
-        self.df = df
-        self.vectors = vectors
-        self.cluster_id = cluster_id
-        self.output_file = output_file
-    
-    def __get_pairs(self):
-        _df = self.df[self.df.cluster == self.cluster_id]
-        return (
-            (i1, i2) 
-            for i1, x1 in _df.iterrows() 
-            for i2, x2 in _df.iterrows() 
-            if i1 < i2 and x1.industry != x2.industry
-        )
+    data['related_to'] = 0
 
-    def run(self):
-        print('Calculating pairwise cosine similarity for cluster ' + str(self.cluster_id))
-        with open(self.output_file, 'w') as out:
-            for i,j in self.__get_pairs():
-                out.write(f'{i},{j},{cosine(self.vectors[i], self.vectors[j])}\n')
-        print('Finished cluster ' + str(self.cluster_id))
+    # assign to each company the nearest neighbor using the index to 'related_to'
+    # each company is also considered as neighbor for itself,
+    # therefore, consider only the second neighbor
+    for i in range(data.shape[0]):
+        print(i, end='\r')
+        data.at[i, 'related_to'] = index.search(vectors[i], k=2, return_distance=False)[0][1]
+
+    data['related_industry'] = data.related_to.apply(lambda i: data.iloc[i].industry)
+    data.to_csv(output_path, index=False)
 
 if __name__ == '__main__':
-    input_file = sys.argv[1]
-    data = pd.read_csv(input_file)
-
-    with open('vectors.pkl', 'rb') as f:
-        vectors = pickle.load(f)
-
-    threads = []
-    for c in data.cluster.unique():
-        t = ClusterPairwiseSimilarityThread(data, c, vectors, f'cluster_{c}_similarities.txt')
-        t.start()
-        threads.append(t)
+    append_related_to('nn_index.pkl', 'vectors.pkl', 'data.csv', 'data.csv')
